@@ -1,0 +1,102 @@
+<!--
+  Generated template for the RendezVousPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+    <ion-navbar color=primary>
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>Ocorrências</ion-title>
+        <ion-buttons right>
+            <button detail-push navPush="AddtaskPage" ion-button><ion-icon name="add-circle"></ion-icon></button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-row class="searchzone">
+        <ion-col col-11>
+            <ion-searchbar placeholder="Pesquisar"  [(ngModel)]="search" (ionInput)="liste(0)"></ion-searchbar>                    
+        </ion-col>
+        <ion-col col-1>
+               <p (click)="toggleGroup(order)"><a><ion-icon name="settings"></ion-icon></a>  </p>               
+        </ion-col>
+    </ion-row>
+    <ion-row *ngIf="isGroupShown(order)">
+        <ion-col col-6>
+            <ion-item>
+                <ion-label>Ocorrência Status</ion-label>
+                <ion-select [(ngModel)]="close" (ionChange)="liste(0)">
+                    <ion-option value="">All</ion-option>
+                    <ion-option value="0">Aberta</ion-option>
+                    <ion-option value="1">Fechado</ion-option>
+                </ion-select>
+            </ion-item>
+        </ion-col>
+        <ion-col col-6>
+            <ion-item>
+                <ion-label>Atribuído para</ion-label>
+                <ion-select [(ngModel)]="assign" (ionChange)="liste(0)">
+                    <ion-option value="">Todas</ion-option>
+                    <ion-option *ngFor="let usr of users" value="{{usr.id}}">{{usr.firstname}} {{usr.name}}</ion-option>
+                </ion-select>
+            </ion-item>  
+        </ion-col>
+        <ion-col col-6>
+            <ion-item>
+                <ion-label>Criada por</ion-label>
+                <ion-select [(ngModel)]="created" (ionChange)="liste(0)">
+                    <ion-option value="">Todas</ion-option>
+                    <ion-option *ngFor="let usrr of users" value="{{usrr.id}}">{{usrr.firstname}} {{usrr.name}}</ion-option>
+                </ion-select>
+            </ion-item>     
+        </ion-col>
+        <ion-col col-6>
+            <ion-item>
+                <ion-label>Tipo da Ocorrência</ion-label>
+                <ion-select [(ngModel)]="type" (ionChange)="liste(0)">
+                    <ion-option value="">All</ion-option>
+                    <ion-option value="Call">Urgente</ion-option>
+                    <ion-option value="Meeting">Grave</ion-option>
+                    <ion-option value="Task">Acidente</ion-option>
+                    <ion-option value="Deadline">Acidente Natural</ion-option>
+                    <ion-option value="Email">Patrulha</ion-option>
+                    <ion-option value="Lunch">Dúvidas</ion-option>
+                </ion-select>
+            </ion-item>           
+        </ion-col>
+    </ion-row>
+    <ion-list text-wrap>    
+        <ion-item-sliding *ngFor="let task of tasks">
+            <ion-item >
+                <img src="assets/Calendar.png" item-left alt="">
+                <h2>{{task.task}}</h2>
+                <p>Atribuído para: {{task.assigned}}</p>
+                <p class="type">{{task.type_activity}}</p>
+                <p class="close" *ngIf="task.close==='1'" color="danger"><i class="badge">Fechado</i></p>
+            </ion-item>
+            <ion-item-options side="right">
+                <button ion-button color="secondary" detail-push navPush="VirementPage" [navParams]=" {item:task}">
+                    <ion-icon name="paper"></ion-icon>
+                </button>
+                <button ion-button color="danger" (click)="deleteData(task.id)">
+                    <ion-icon name="trash"></ion-icon>
+                </button>
+                <button ion-button color="primary" (click)="closeData(task.id)">
+                        <ion-icon name="close"></ion-icon>
+                    </button>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="listesuivante($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <ion-refresher (ionRefresh)="liste($event)">
+        <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Carregando...">
+        </ion-refresher-content>
+    </ion-refresher>
+</ion-content>

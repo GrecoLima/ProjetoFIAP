@@ -1,0 +1,66 @@
+import { Component, ViewChild } from '@angular/core';
+import { Platform, Nav } from 'ionic-angular';
+import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { HomePage } from '../pages/home/home';
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+
+@Component({
+  templateUrl: 'app.html'
+})
+export class MyApp {
+  @ViewChild(Nav) nav: Nav;
+  rootPage:any;
+  user:{};
+
+  pages: Array<{title: string, component: any, icone: any}>
+
+  constructor(platform: Platform, public alertCtrl: AlertController, statusBar: StatusBar, splashScreen: SplashScreen) {
+    platform.ready().then(() => {
+      statusBar.styleDefault();
+      splashScreen.hide();
+    });
+
+    this.user= JSON.parse(localStorage.getItem('todoin_user'));
+    if(!this.user){
+      this.rootPage = "LoginPage"
+    }else{
+      this.rootPage = HomePage;
+    }
+
+    this.pages = [
+      { title: 'Dashboard', component: HomePage, icone: 'home' },
+      { title: 'Ocorrências', component: "TasksPage", icone: 'list' },
+      { title: 'Perfil', component: "ProfilPage", icone: 'contact' },
+      { title: 'Mudar Senha', component: "ChangepassPage", icone: 'lock' },
+    ];
+  }
+
+  openPage(page) {
+    this.nav.setRoot(page.component);
+  }
+
+  logout(){
+    let confirmAlert = this.alertCtrl.create({
+        title: "Informação",
+        message: "Realmente deseja sair da aplicação ?",
+        buttons: [
+            {
+                text: 'Não',
+                handler: () => {
+                    return;
+                }
+            },
+            {
+                text: 'Sim',
+                handler: () => {
+                  localStorage.removeItem('todoin_user');
+                  this.nav.setRoot("LoginPage");
+                }
+            }
+        ]
+    });
+    confirmAlert.present();
+  }
+  
+}
